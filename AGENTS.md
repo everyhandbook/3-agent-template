@@ -1,6 +1,6 @@
-# [프로젝트명] - Codex 운영 가이드
+# [프로젝트명] - 3-Agent 운영 가이드
 
-이 파일은 이 레포지토리에서 AI 에이전트(Codex 등)가 따라야 할 기본 운영 지침서입니다.
+이 파일은 이 레포지토리에서 `Claude Code`, `Google Antigravity`, `Codex`가 같은 기준으로 협업하기 위한 공통 운영 가이드입니다.
 
 ## 목표
 
@@ -11,25 +11,43 @@
 
 ## 단일 원본 정책 (Single Source of Truth)
 
-- **작성 원본**: `.claude` 
-  - 규칙과 워크플로우를 여기서 먼저 작성하고 수정합니다.
+- **공통 원본**: `.claude`
+  - 규칙, 공통 workflow, Claude용 공통 자산을 여기서 먼저 작성/수정합니다.
 - **실행 미러**: `.agent`
-  - Antigravity 등 다른 에이전트가 참조하는 읽기 전용 미러입니다.
-  - 평시에는 `.agent` 파일을 직접 수정하지 않습니다.
+  - Antigravity 실행용 미러입니다.
+  - 평시에는 `.agent`를 직접 수정하지 않습니다.
+- **Codex 전용 skill**: `.agents/skills`
+  - Codex에서만 쓰는 skill은 별도 위치에서 관리합니다.
 
 ## 경로 매핑
 
-| 작성 원본 (Claude) | 실행 미러 (Antigravity/Codex) | 목적 |
+| 작성 원본 | 실행 미러 | 목적 |
 |---|---|---|
-| `.claude/commands/*.md` | `.agent/workflows/*.md` | 실행 가능한 워크플로우 정의 |
-| `.claude/rules/*.md` | `.agent/rules/*.md` | 프로젝트 규칙 및 가이드라인 |
+| `.claude/commands/*.md` | `.agent/workflows/*.md` | 공통 workflow |
+| `.claude/rules/*.md` | `.agent/rules/*.md` | 공통 규칙 |
+| `.claude/skills/*/SKILL.md` | `.agent/workflows/{name}.md` | Claude skill을 Antigravity workflow로 flatten sync |
+| `.agents/skills/*/SKILL.md` | 동기화 없음 | Codex 전용 skill |
+| `.agent/skills/*` | 동기화 없음 | Antigravity 전용 skill |
+
+## 에이전트별 실행 방식
+
+- **Claude Code**
+  - `.claude/skills/`를 우선 사용
+  - 공통 workflow는 `.claude/commands/`를 함께 사용 가능
+- **Google Antigravity**
+  - `.agent/skills/`는 자동 활성화용
+  - `.agent/workflows/`는 명시형 `/명령어` 실행용
+- **Codex**
+  - `.agents/skills/`를 우선 사용
+  - 공통 운영 규칙은 `AGENTS.md`, `.claude`, `.agent` 문서를 함께 참조
 
 ## 세션 시작 체크리스트
 
 1. `task.md`를 읽고 현재 진행 상황을 파악합니다.
 2. `docs/session-logs/`의 최신 로그를 확인하여 이전 작업 맥락을 이어서 진행합니다. (필요 시)
 3. `README.md`를 읽고 프로젝트의 핵심 목표를 상기합니다.
-4. `.claude`의 규칙이나 워크플로우가 변경되었다면 동기화 스크립트를 실행합니다.
+4. `.claude`의 규칙/워크플로우/공통 skill이 변경되었다면 동기화 스크립트를 실행합니다.
+5. `docs/lessons.md`가 있으면 최근 교훈을 확인합니다.
 
 ## 세션 종료 체크리스트
 
@@ -39,6 +57,7 @@
 2. 세션 로그를 작성하여 `docs/session-logs/`에 저장합니다.
    - 날짜, 수행 작업, 변경 파일, 메모 등 포함
 3. `.claude` 폴더 내 변경사항이 있다면 동기화를 실행하고 검증합니다.
+4. 반복 가능성이 큰 교훈이 생겼다면 `docs/lessons.md` 반영 여부를 검토합니다.
 
 ## 동기화 명령
 

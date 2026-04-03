@@ -8,8 +8,9 @@
 
 | 작업 | 상태 | 메모 |
 |------|--------|-------|
-| 프로젝트 생성 (초기화) | 대기 (Pending) | 3-Agent 템플릿 복제 대기 |
-| 기본 규칙 설정 (프로젝트별) | 대기 (Pending) | `.claude/rules/project-rules.md` 작성 필요 |
+| 프로젝트 생성 (초기화) | 완료 (Done) | 템플릿 레포 생성 완료 |
+| 기본 규칙 설정 (프로젝트별) | 완료 (Done) | 기본 규칙/운영 문서 포함 |
+| 최신 3-Agent 구조 반영 | 완료 (Done) | `skills / commands / workflows / sync` 구조 최신화 |
 
 ## 상태 범례
 
@@ -20,6 +21,6 @@
 
 ## 다음 단계
 
-- [ ] `.claude/rules/project-rules.md`에 프로젝트별 규칙 정의
-- [ ] `task.md` 진행 상황 업데이트 시작
-- [ ] 첫 번째 워크플로우 실행 테스트 (동기화)
+- [ ] `.claude/rules/project-rules.md`에 실제 프로젝트별 규칙 정의
+- [ ] 새 프로젝트에서 `.agents/skills/` 필요 skill 선별
+- [ ] 첫 번째 동기화 및 checkpoint workflow 실행 테스트

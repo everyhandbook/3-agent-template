@@ -65,7 +65,54 @@ else {
     $direction = ".agent -> .claude (recovery mode)"
 }
 
+function Sync-SkillsToWorkflows {
+    param(
+        [Parameter(Mandatory = $true)][string]$SourceSkillsDir,
+        [Parameter(Mandatory = $true)][string]$TargetDir
+    )
+
+    Write-Output "sync: skills -> workflows"
+
+    if (-not (Test-Path -LiteralPath $SourceSkillsDir -PathType Container)) {
+        Write-Output "  (no skills directory, skipping)"
+        return
+    }
+
+    $copied = 0
+    $unchanged = 0
+
+    $skillDirs = Get-ChildItem -LiteralPath $SourceSkillsDir -Directory
+    foreach ($skillDir in $skillDirs) {
+        $skillFile = Join-Path $skillDir.FullName "SKILL.md"
+
+        if (-not (Test-Path -LiteralPath $skillFile -PathType Leaf)) {
+            continue
+        }
+
+        $targetPath = Join-Path $TargetDir "$($skillDir.Name).md"
+
+        if (Test-Path -LiteralPath $targetPath -PathType Leaf) {
+            $sourceHash = (Get-FileHash -LiteralPath $skillFile -Algorithm SHA256).Hash
+            $targetHash = (Get-FileHash -LiteralPath $targetPath -Algorithm SHA256).Hash
+            if ($sourceHash -eq $targetHash) {
+                $unchanged++
+                continue
+            }
+        }
+
+        Copy-Item -LiteralPath $skillFile -Destination $targetPath -Force
+        $copied++
+        Write-Output ("  updated: {0}.md" -f $skillDir.Name)
+    }
+
+    Write-Output ("  result: copied={0} unchanged={1}" -f $copied, $unchanged)
+}
+
 Write-Output ("sync start ({0})" -f $direction)
 Sync-MarkdownFiles -SourceDir $sourceCommands -TargetDir $targetWorkflows -Label "commands/workflows (*.md)"
 Sync-MarkdownFiles -SourceDir $sourceRules -TargetDir $targetRules -Label "rules (*.md)"
+if ($From -eq "claude") {
+    $sourceSkills = Join-Path $projectRoot ".claude/skills"
+    Sync-SkillsToWorkflows -SourceSkillsDir $sourceSkills -TargetDir $targetWorkflows
+}
 Write-Output "sync complete"

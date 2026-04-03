@@ -96,7 +96,49 @@ sync_markdown_files() {
     echo "  result: copied=$copied unchanged=$unchanged"
 }
 
+sync_skills_to_workflows() {
+    local src="$1"
+    local dst="$2"
+    local copied=0
+    local unchanged=0
+
+    echo "sync: skills -> workflows"
+
+    if [[ ! -d "$src" ]]; then
+        echo "  (no skills directory, skipping)"
+        return
+    fi
+
+    shopt -s nullglob
+    for skill_dir in "$src"/*/; do
+        local skill_name
+        skill_name="$(basename "$skill_dir")"
+        local skill_file="$skill_dir/SKILL.md"
+
+        if [[ ! -f "$skill_file" ]]; then
+            continue
+        fi
+
+        local target="$dst/${skill_name}.md"
+
+        if [[ -f "$target" ]] && cmp -s "$skill_file" "$target"; then
+            unchanged=$((unchanged + 1))
+            continue
+        fi
+
+        cp "$skill_file" "$target"
+        copied=$((copied + 1))
+        echo "  updated: ${skill_name}.md"
+    done
+    shopt -u nullglob
+
+    echo "  result: copied=$copied unchanged=$unchanged"
+}
+
 echo "sync start ($DIRECTION)"
 sync_markdown_files "$SRC_COMMANDS" "$DST_WORKFLOWS" "commands/workflows (*.md)"
 sync_markdown_files "$SRC_RULES" "$DST_RULES" "rules (*.md)"
+if [[ "$FROM" == "claude" ]]; then
+    sync_skills_to_workflows "$PROJECT_ROOT/.claude/skills" "$DST_WORKFLOWS"
+fi
 echo "sync complete"
