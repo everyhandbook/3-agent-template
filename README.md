@@ -4,60 +4,99 @@
 
 ## 핵심 목적
 
-1.  **AI 에이전트 간의 설정 통일**: 하나의 진실(Single Source)을 유지하며 여러 에이전트가 동일한 규칙과 워크플로우를 참조하도록 합니다.
-2.  **워크플로우 자동화**: 반복적인 작업(세션 시작/종료 등)을 스크립트와 문서로 자동화합니다.
-3.  **문서 기반 운영**: 프로젝트의 모든 상태와 의사결정을 문서(`task.md`, `AGENTS.md`)에 기록하여 히스토리를 관리합니다.
+1. **AI 에이전트 간의 설정 통일**
+   - 하나의 진실(Single Source)을 유지하며 여러 에이전트가 동일한 규칙과 워크플로우를 참조하도록 합니다.
+2. **워크플로우 자동화**
+   - 반복적인 작업(세션 시작/종료, checkpoint, handoff 등)을 스크립트와 문서로 운영합니다.
+3. **문서 기반 운영**
+   - 프로젝트의 모든 상태와 의사결정을 문서(`task.md`, `AGENTS.md`, `docs/session-logs/`, `docs/lessons.md`)에 기록하여 히스토리를 관리합니다.
 
 ## 디렉토리 구조
 
 ```text
 .
 ├── .claude/                    # 규칙/워크플로우의 단일 원본 (Primary)
-│   ├── commands/               # 실행 가능한 명령어 모음
+│   ├── commands/               # 공통 workflow 원본
 │   ├── skills/                 # Claude Code용 skills (선택)
-│   └── rules/                  # 프로젝트 전반의 규칙 (코딩 스타일 등)
+│   └── rules/                  # 프로젝트 전반의 규칙
 ├── .agent/                     # .claude의 읽기 전용 미러 (Mirror)
-│   ├── workflows/              # Antigravity/Codex가 참조하는 워크플로우
+│   ├── workflows/              # Antigravity 명시형 workflow
 │   ├── skills/                 # Antigravity 전용 skills (선택)
-│   └── rules/                  # Antigravity/Codex가 참조하는 규칙
+│   └── rules/                  # Antigravity가 참조하는 규칙
 ├── .agents/                    # Codex 전용 skills
 │   └── skills/
+├── docs/
+│   ├── lessons.md              # 운영 교훈 누적 문서
+│   └── session-logs/           # 세션 로그, brief, review, handoff, status
 ├── scripts/                    # 동기화 스크립트 (Bash/PowerShell)
 ├── AGENTS.md                   # 에이전트 운영 가이드
 └── task.md                     # 프로젝트 진행 상황 추적
 ```
 
+## 기본 제공 운영 자산
+
+이 템플릿은 아래 운영 자산을 기본 제공 세트로 포함합니다.
+
+- `session-start`
+  - 새 세션에서 현재 상태와 다음 작업을 빠르게 파악하는 시작 skill
+- `checkpoint`
+  - 세션을 닫지 않고 현재 작업만 정리해 로컬 커밋으로 남기는 경량 skill
+- `session-wrap-up`
+  - 세션 종료 시 `task.md`, 세션 로그, `docs/lessons.md` 반영 여부를 정리하는 종료 skill
+- `agent-handoff`
+  - `brief`, `review`, `handoff`, `status` 문서를 남기는 범용 skill
+- `docs/lessons.md`
+  - 반복되는 운영 교훈과 개선점을 누적하는 기본 문서
+
 ## 시작하기
 
-1.  이 템플릿을 복제(Clone)하거나 다운로드하여 새 프로젝트를 시작하세요.
-2.  `AGENTS.md`를 프로젝트에 맞게 수정합니다 (옵션).
-3.  `.claude/rules/project-rules.md`에 프로젝트별 도메인 규칙이나 비즈니스 로직을 작성합니다.
-4.  공통 workflow를 만들고 싶다면 `.claude/commands/`에 마크다운 파일을 생성하세요.
-5.  Codex 전용 skill이 필요하면 `.agents/skills/{name}/SKILL.md`를 생성하세요.
-6.  스크립트를 실행하여 `.agent` 폴더로 동기화합니다.
+1. 이 템플릿을 복제(Clone)하거나 다운로드하여 새 프로젝트를 시작하세요.
+2. `AGENTS.md`를 프로젝트에 맞게 수정합니다.
+3. `.claude/rules/project-rules.md`에 프로젝트별 도메인 규칙이나 비즈니스 로직을 작성합니다.
+4. 공통 workflow를 만들고 싶다면 `.claude/commands/`에 마크다운 파일을 생성하세요.
+5. Codex 전용 skill이 필요하면 `.agents/skills/{name}/SKILL.md`를 생성하세요.
+6. 스크립트를 실행하여 `.agent` 폴더로 동기화합니다.
 
-    ```bash
-    ./scripts/sync-agent-files.sh
-    ```
+```bash
+./scripts/sync-agent-files.sh
+```
 
-    또는 Windows:
+또는 Windows:
 
-    ```powershell
-    .\scripts\sync-agent-files.ps1
-    ```
+```powershell
+.\scripts\sync-agent-files.ps1
+```
+
+## 운영 권장 루프
+
+1. `session-start`로 현재 상태 확인
+2. 작업 진행 중 필요하면 `agent-handoff` 또는 `checkpoint` 사용
+3. 세션 종료 시 `session-wrap-up`으로 `task.md`, 세션 로그, `docs/lessons.md` 반영 여부 점검
 
 ## 3-Agent 동기화 원칙
 
-- **공통 작성**: 공통 규칙과 workflow는 `.claude`에서 작성합니다.
-- **실행 미러**: `.claude` 내용은 스크립트를 통해 `.agent`로 복사됩니다.
-- **Codex 전용 skill**: `.agents/skills/`는 별도 관리하며 sync 대상이 아닙니다.
-- **주의**: `.agent` 폴더를 직접 수정하면 다음 동기화 시 덮어써질 수 있습니다. (복구 모드 제외)
+- **공통 작성**
+  - 공통 규칙과 workflow는 `.claude`에서 작성합니다.
+- **실행 미러**
+  - `.claude` 내용은 스크립트를 통해 `.agent`로 복사됩니다.
+- **Codex 전용 skill**
+  - `.agents/skills/`는 별도 관리하며 sync 대상이 아닙니다.
+- **주의**
+  - `.agent` 폴더를 직접 수정하면 다음 동기화 시 덮어써질 수 있습니다. 복구 모드 외에는 직접 수정하지 않습니다.
 
 ## 주요 파일 설명
 
-- `AGENTS.md`: 에이전트가 가장 먼저 읽어야 할 운영 매뉴얼
-- `task.md`: 현재 진행 중인 작업, 다음 할 일, 완료된 작업을 기록
-- `.claude/rules/language.md`: 기본 언어 설정 (한국어 등)
-- `.claude/rules/workflow.md`: workflow/skill 구조 규칙
-- `.claude/rules/ai-tools-setup.md`: 도구별 역할 구분
-- `.claude/rules/sync-rules.md`: `.claude -> .agent` 동기화 규칙
+- `AGENTS.md`
+  - 에이전트가 가장 먼저 읽어야 할 운영 매뉴얼
+- `task.md`
+  - 현재 진행 중인 작업, 다음 할 일, 완료된 작업을 기록
+- `docs/lessons.md`
+  - 반복되는 교훈, 운영 개선점, 체크리스트를 누적
+- `docs/session-logs/*.md`
+  - 세션 로그, handoff, review, status 문서
+- `.claude/rules/workflow.md`
+  - workflow/skill 구조 규칙
+- `.claude/rules/ai-tools-setup.md`
+  - 도구별 역할 구분
+- `.claude/rules/sync-rules.md`
+  - `.claude -> .agent` 동기화 규칙

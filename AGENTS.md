@@ -7,7 +7,7 @@
 다음 3개 에이전트가 단일 소스(Single Source)를 기반으로 협업합니다.
 - Claude Code
 - Google Antigravity
-- Codex (Cursor/IDE)
+- Codex
 
 ## 단일 원본 정책 (Single Source of Truth)
 
@@ -41,12 +41,27 @@
   - `.agents/skills/`를 우선 사용
   - 공통 운영 규칙은 `AGENTS.md`, `.claude`, `.agent` 문서를 함께 참조
 
+## 기본 제공 운영 자산
+
+이 템플릿은 아래 자산을 공용 기본 세트로 제공합니다.
+
+- `session-start`
+  - 새 세션에서 현재 상태와 다음 작업을 빠르게 파악하는 시작 skill
+- `checkpoint`
+  - 세션을 닫지 않고 현재 작업만 정리해 로컬 커밋으로 남기는 경량 skill
+- `session-wrap-up`
+  - 세션 종료 시 `task.md`, 세션 로그, `docs/lessons.md` 반영 여부를 정리하는 종료 skill
+- `agent-handoff`
+  - 다른 agent에게 `brief`, `review`, `handoff`, `status` 문서를 남기는 범용 skill
+- `docs/lessons.md`
+  - 반복되는 운영 교훈과 개선점을 누적하는 기본 문서
+
 ## 세션 시작 체크리스트
 
 1. `task.md`를 읽고 현재 진행 상황을 파악합니다.
-2. `docs/session-logs/`의 최신 로그를 확인하여 이전 작업 맥락을 이어서 진행합니다. (필요 시)
+2. `docs/session-logs/`의 최신 로그를 확인하여 이전 작업 맥락을 이어서 진행합니다. 필요할 때만 확인해도 됩니다.
 3. `README.md`를 읽고 프로젝트의 핵심 목표를 상기합니다.
-4. `.claude`의 규칙/워크플로우/공통 skill이 변경되었다면 동기화 스크립트를 실행합니다.
+4. `.claude`의 규칙, workflow, 공통 skill이 변경되었다면 동기화 스크립트를 실행합니다.
 5. `docs/lessons.md`가 있으면 최근 교훈을 확인합니다.
 
 ## 세션 종료 체크리스트
@@ -81,3 +96,8 @@
 # 복구 모드 (역방향)
 .\scripts\sync-agent-files.ps1 -From agent
 ```
+
+## 현재 범위
+
+- 이번 단계에서는 pre-commit/CI 강제 동기화는 적용하지 않습니다.
+- Codex 전용 skill은 현재 `session-start`, `checkpoint`, `session-wrap-up`, `agent-handoff`를 기본 제공 세트로 관리합니다.

@@ -24,8 +24,16 @@ description: AI 도구 설정 및 역할 구분 (Antigravity, Claude Code, Codex
 - Codex 전용 skills: `.agents/skills/`
 - 공통 미러 참조: `.agent/rules/`, `.agent/workflows/`
 
+기본 제공 운영 자산:
+- `session-start`
+- `checkpoint`
+- `session-wrap-up`
+- `agent-handoff`
+- `docs/lessons.md`
+
 ## 운영 원칙
 
 - 공통 운영 자산은 `.claude`에서 먼저 수정합니다.
 - `.agent`는 실행 미러이므로 직접 수정하지 않습니다.
 - Codex 전용 skill과 Antigravity 전용 skill은 sync 대상이 아닙니다.
+- `agent-handoff`는 범용 handoff 문서용 기본 skill입니다.
