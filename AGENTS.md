@@ -9,34 +9,37 @@
 - Google Antigravity
 - Codex
 
+## 커뮤니케이션 규칙
+
+- 사용자를 부를 때는 기본 호칭으로 `사용자님`을 사용합니다.
+- 다만 모든 문장마다 반복하지 말고, 자연스러운 위치에서만 사용합니다.
+- 문서와 응답의 톤은 공손하지만 과하게 딱딱하지 않게 유지합니다.
+
 ## 단일 원본 정책 (Single Source of Truth)
 
 - **공통 원본**: `.claude`
-  - 규칙, 공통 workflow, Claude용 공통 자산을 여기서 먼저 작성/수정합니다.
+  - 규칙과 shared skill을 여기서 먼저 작성/수정합니다.
 - **실행 미러**: `.agent`
   - Antigravity 실행용 미러입니다.
   - 평시에는 `.agent`를 직접 수정하지 않습니다.
-- **Codex 전용 skill**: `.agents/skills`
-  - Codex에서만 쓰는 skill은 별도 위치에서 관리합니다.
+- **Codex 미러**: `.agents/skills`
+  - `.claude/skills`를 Codex에서 읽기 좋은 구조로 미러링합니다.
 
 ## 경로 매핑
 
 | 작성 원본 | 실행 미러 | 목적 |
 |---|---|---|
-| `.claude/commands/*.md` | `.agent/workflows/*.md` | 공통 workflow |
+| `.claude/skills/*/SKILL.md` | `.agents/skills/*/SKILL.md` | Codex shared skill mirror |
+| `.claude/skills/*/SKILL.md` | `.agent/skills/*/SKILL.md` | Antigravity skill mirror |
+| `.claude/skills/*/SKILL.md` | `.agent/workflows/{name}.md` | Antigravity workflow compatibility mirror |
 | `.claude/rules/*.md` | `.agent/rules/*.md` | 공통 규칙 |
-| `.claude/skills/*/SKILL.md` | `.agent/workflows/{name}.md` | Claude skill을 Antigravity workflow로 flatten sync |
-| `.agents/skills/*/SKILL.md` | 동기화 없음 | Codex 전용 skill |
-| `.agent/skills/*` | 동기화 없음 | Antigravity 전용 skill |
 
 ## 에이전트별 실행 방식
 
 - **Claude Code**
-  - `.claude/skills/`를 우선 사용
-  - 공통 workflow는 `.claude/commands/`를 함께 사용 가능
+  - `.claude/skills/`, `.claude/rules/`를 우선 사용
 - **Google Antigravity**
-  - `.agent/skills/`는 자동 활성화용
-  - `.agent/workflows/`는 명시형 `/명령어` 실행용
+  - `.agent/skills/`, `.agent/workflows/`, `.agent/rules/`를 사용
 - **Codex**
   - `.agents/skills/`를 우선 사용
   - 공통 운영 규칙은 `AGENTS.md`, `.claude`, `.agent` 문서를 함께 참조
@@ -61,7 +64,7 @@
 1. `task.md`를 읽고 현재 진행 상황을 파악합니다.
 2. `docs/session-logs/`의 최신 로그를 확인하여 이전 작업 맥락을 이어서 진행합니다. 필요할 때만 확인해도 됩니다.
 3. `README.md`를 읽고 프로젝트의 핵심 목표를 상기합니다.
-4. `.claude`의 규칙, workflow, 공통 skill이 변경되었다면 동기화 스크립트를 실행합니다.
+4. `.claude`의 규칙과 shared skill이 변경되었다면 동기화 스크립트를 실행합니다.
 5. `docs/lessons.md`가 있으면 최근 교훈을 확인합니다.
 
 ## 세션 종료 체크리스트
@@ -100,4 +103,4 @@
 ## 현재 범위
 
 - 이번 단계에서는 pre-commit/CI 강제 동기화는 적용하지 않습니다.
-- Codex 전용 skill은 현재 `session-start`, `checkpoint`, `session-wrap-up`, `agent-handoff`를 기본 제공 세트로 관리합니다.
+- 기본 제공 skill은 현재 `session-start`, `checkpoint`, `session-wrap-up`, `agent-handoff`를 공용 세트로 관리합니다.
