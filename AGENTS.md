@@ -15,6 +15,14 @@
 - 다만 모든 문장마다 반복하지 말고, 자연스러운 위치에서만 사용합니다.
 - 문서와 응답의 톤은 공손하지만 과하게 딱딱하지 않게 유지합니다.
 
+## Self-Improvement 규칙
+
+- 사용자 피드백으로 작업 방식이나 응답 톤을 수정했다면, 반복 가치가 있는 교훈을 `docs/lessons.md`에 남깁니다.
+- 반복 가능한 실수, 운영 함정, 규칙 변경 이유는 세션 로그보다 `docs/lessons.md`에 우선 남깁니다.
+- 이번 세션에만 유효한 메모나 아직 확정되지 않은 추측은 `docs/session-logs/`에 남깁니다.
+- `session-start` 때는 최근 `docs/lessons.md` 항목을 먼저 확인하고, 관련 교훈이 있으면 작업 전에 반영합니다.
+- `checkpoint`와 `session-wrap-up` 때는 새로 남겨야 할 lesson이 생겼는지 함께 판단합니다.
+
 ## 단일 원본 정책 (Single Source of Truth)
 
 - **공통 원본**: `.claude`
@@ -42,7 +50,7 @@
   - `.agent/skills/`, `.agent/workflows/`, `.agent/rules/`를 사용
 - **Codex**
   - `.agents/skills/`를 우선 사용
-  - 공통 운영 규칙은 `AGENTS.md`, `.claude`, `.agent` 문서를 함께 참조
+  - 공통 운영 규칙은 `AGENTS.md`를 1차 기준으로 보고, 필요 시 `.claude`, `.agent` 문서를 함께 참조
 
 ## 기본 제공 운영 자산
 
