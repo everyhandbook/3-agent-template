@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# Auto-sync .claude -> .agent / .agents before every commit.
+# Installed via: ./scripts/install-hooks.sh (or install-hooks.ps1)
+#
+# Behavior:
+#   - If any .claude/ files are staged, runs sync and re-stages the mirrors.
+#   - Otherwise, skips silently.
+#   - Safe to run manually; idempotent.
+
+set -euo pipefail
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+cd "$REPO_ROOT"
+
+# Only sync when .claude/ content is staged
+if ! git diff --cached --name-only | grep -qE '^\.claude/'; then
+    exit 0
+fi
+
+if [[ ! -f "scripts/sync-agent-files.sh" ]]; then
+    echo "pre-commit: scripts/sync-agent-files.sh not found" >&2
+    exit 1
+fi
+
+echo "pre-commit: .claude/ changes detected -> syncing mirrors"
+bash scripts/sync-agent-files.sh >/dev/null
+
+# Re-stage the mirror changes so the commit contains both sides
+git add .agent .agents 2>/dev/null || true
+
+exit 0

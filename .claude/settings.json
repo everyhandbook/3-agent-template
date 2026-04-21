@@ -2,5 +2,18 @@
   "permissions": {
     "allow": [],
     "deny": []
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'f=$(python -c \"import json,sys;d=json.load(sys.stdin);print(d.get(\\\"tool_input\\\",{}).get(\\\"file_path\\\",\\\"\\\"))\" 2>/dev/null); case \"$f\" in *.claude/*) bash scripts/sync-agent-files.sh >/dev/null 2>&1 && echo \"[auto-sync] .claude -> .agent/.agents\" ;; esac; exit 0'"
+          }
+        ]
+      }
+    ]
   }
 }

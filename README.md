@@ -55,13 +55,30 @@
 4. 공통 절차를 만들고 싶다면 `.claude/skills/{name}/SKILL.md`를 생성하세요.
 5. `SKILL.md`에는 frontmatter의 `name`, `description`을 포함하세요.
 6. Codex UI 노출이 필요하면 `agents/openai.yaml`도 함께 추가하세요.
-7. 스크립트를 실행하여 `.agent`, `.agents/skills`로 동기화합니다.
+7. 신규 클론에서 **훅을 1회 설치**합니다 — 이후 동기화는 자동으로 돕니다.
+
+```bash
+bash scripts/install-hooks.sh
+```
+
+또는 Windows:
+
+```powershell
+.\scripts\install-hooks.ps1
+```
+
+## 자동 동기화
+
+`.claude`를 원본으로 두고 `.agent`, `.agents`는 미러로 관리되며, **sync 명령을 수동으로 기억할 필요가 없습니다**.
+
+- **Claude Code PostToolUse 훅** (`.claude/settings.json`): Claude Code가 `.claude/` 아래 파일을 수정하면 즉시 sync 스크립트가 실행됩니다.
+- **git pre-commit 훅** (`.githooks/pre-commit`): 어떤 에이전트(Claude / Codex / Antigravity)에서 편집했든, `.claude/` 변경을 staged 하면 커밋 직전에 sync가 돌고 미러 변경이 같은 커밋에 포함됩니다. 최초 1회만 `scripts/install-hooks.sh`로 활성화.
+
+수동 실행이 필요하면:
 
 ```bash
 ./scripts/sync-agent-files.sh
 ```
-
-또는 Windows:
 
 ```powershell
 .\scripts\sync-agent-files.ps1
