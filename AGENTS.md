@@ -77,30 +77,38 @@
 3. `.claude` 폴더 내 변경사항이 있다면 동기화를 실행하고 검증합니다.
 4. 반복 가능성이 큰 교훈이 생겼다면 `docs/lessons.md` 반영 여부를 검토합니다.
 
-## 동기화 명령
+## 동기화 — 자동으로 돕니다
 
-작업 환경에 따라 아래 명령 중 하나를 사용합니다.
+이 템플릿은 **별도 명령 없이도 미러가 최신 상태로 유지**됩니다. 세 에이전트(Claude / Codex / Antigravity) 누구든 `.claude/`만 고치면 `.agent`, `.agents`는 알아서 따라옵니다.
+
+- **Claude Code 세션**: `.claude/` 아래 파일을 Edit/Write 하면 PostToolUse 훅이 즉시 sync를 실행합니다. (`.claude/settings.json`)
+- **모든 커밋 시점**: git pre-commit 훅이 `.claude/` staged 변경을 감지해 sync를 돌리고 미러 변경을 같은 커밋에 포함시킵니다. (`.githooks/pre-commit`)
+
+### 신규 클론에서 1회만 실행
 
 ```bash
-# Bash (기본: .claude -> .agent)
-./scripts/sync-agent-files.sh
-./scripts/sync-agent-files.sh --from claude
-
-# 복구 모드 (역방향: .agent -> .claude)
-# 실수로 .agent를 수정했을 때만 사용
-./scripts/sync-agent-files.sh --from agent
+bash scripts/install-hooks.sh
 ```
 
 ```powershell
-# PowerShell (기본: .claude -> .agent)
-.\scripts\sync-agent-files.ps1
-.\scripts\sync-agent-files.ps1 -From claude
+.\scripts\install-hooks.ps1
+```
 
-# 복구 모드 (역방향)
+이 명령은 `core.hooksPath=.githooks`로 설정해 pre-commit 훅을 활성화합니다.
+
+### 수동 실행 (필요 시)
+
+```bash
+./scripts/sync-agent-files.sh              # 기본: .claude -> .agent/.agents
+./scripts/sync-agent-files.sh --from agent # 복구 모드 (역방향)
+```
+
+```powershell
+.\scripts\sync-agent-files.ps1
 .\scripts\sync-agent-files.ps1 -From agent
 ```
 
 ## 현재 범위
 
-- 이번 단계에서는 pre-commit/CI 강제 동기화는 적용하지 않습니다.
+- pre-commit 훅과 Claude Code PostToolUse 훅이 자동 동기화를 담당합니다.
 - 기본 제공 skill은 현재 `session-start`, `checkpoint`, `session-wrap-up`, `agent-handoff`를 공용 세트로 관리합니다.
