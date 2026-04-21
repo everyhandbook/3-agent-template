@@ -43,10 +43,12 @@
 
 1. 공통 skill은 `.claude/skills/`에 작성합니다.
 2. 공통 규칙은 `.claude/rules/`에 작성합니다.
-3. `SKILL.md`에는 frontmatter의 `name`, `description`을 포함합니다.
-4. Codex UI 노출이 필요하면 `agents/openai.yaml`을 함께 둡니다.
-5. `.agent`, `.agents` 미러는 직접 수정하지 않고 sync로 반영합니다.
-6. 세션 운영 규칙을 바꾸는 경우 `docs/lessons.md` 확인 및 반영 절차와 충돌하지 않는지 함께 점검합니다.
+3. 새 skill을 만들거나 기존 skill을 크게 고칠 때는 먼저 `skill-creator` 시스템 skill을 확인하고 그 형식을 따릅니다.
+4. `SKILL.md`에는 frontmatter의 `name`, `description`을 포함합니다.
+5. Codex UI 노출이 필요하면 `agents/openai.yaml`을 함께 둡니다.
+6. 항상 켜져야 하는 운영 정책은 skill보다 `.claude/rules/*.md`가 맞는지 먼저 판단합니다.
+7. `.agent`, `.agents` 미러는 직접 수정하지 않고 sync로 반영합니다.
+8. 세션 운영 규칙을 바꾸는 경우 `docs/lessons.md` 확인 및 반영 절차와 충돌하지 않는지 함께 점검합니다.
 
 ## 동기화
 

@@ -51,7 +51,7 @@
 - `session-start`
   - 새 세션에서 현재 상태와 다음 작업을 빠르게 파악하는 시작 skill
 - `checkpoint`
-  - 세션을 닫지 않고 현재 작업만 정리해 로컬 커밋으로 남기는 경량 skill
+  - 세션을 닫지 않고 현재 작업만 정리하고 관련 파일만 골라 로컬 커밋으로 남기는 경량 skill
 - `session-wrap-up`
   - 세션 종료 시 `task.md`, 세션 로그, `docs/lessons.md` 반영 여부를 정리하는 종료 skill
 - `agent-handoff`
@@ -66,6 +66,7 @@
 3. `README.md`를 읽고 프로젝트의 핵심 목표를 상기합니다.
 4. `.claude`의 규칙과 shared skill이 변경되었다면 동기화 스크립트를 실행합니다.
 5. `docs/lessons.md`가 있으면 최근 교훈을 확인합니다.
+6. skill을 새로 만들거나 크게 수정할 때는 먼저 `skill-creator` 시스템 skill을 확인합니다.
 
 ## 세션 종료 체크리스트
 
