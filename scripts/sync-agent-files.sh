@@ -47,14 +47,16 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 
 if [[ "$FROM" == "claude" ]]; then
-    SRC_COMMANDS="$PROJECT_ROOT/.claude/commands"
+    SOURCE_SKILLS="$PROJECT_ROOT/.claude/skills"
+    TARGET_CODEX_SKILLS="$PROJECT_ROOT/.agents/skills"
+    TARGET_AGENT_SKILLS="$PROJECT_ROOT/.agent/skills"
     DST_WORKFLOWS="$PROJECT_ROOT/.agent/workflows"
     SRC_RULES="$PROJECT_ROOT/.claude/rules"
     DST_RULES="$PROJECT_ROOT/.agent/rules"
     DIRECTION=".claude -> .agent"
 else
-    SRC_COMMANDS="$PROJECT_ROOT/.agent/workflows"
-    DST_WORKFLOWS="$PROJECT_ROOT/.claude/commands"
+    SOURCE_SKILLS="$PROJECT_ROOT/.agent/skills"
+    TARGET_CLAUDE_SKILLS="$PROJECT_ROOT/.claude/skills"
     SRC_RULES="$PROJECT_ROOT/.agent/rules"
     DST_RULES="$PROJECT_ROOT/.claude/rules"
     DIRECTION=".agent -> .claude (recovery mode)"
@@ -96,11 +98,36 @@ sync_markdown_files() {
     echo "  result: copied=$copied unchanged=$unchanged"
 }
 
+sync_skill_directories() {
+    local source_skills_dir="$1"
+    local target_skills_dir="$2"
+    local label="$3"
+
+    echo "sync: $label"
+
+    if [[ ! -d "$source_skills_dir" ]]; then
+        echo "  (no skills directory, skipping)"
+        return
+    fi
+
+    mkdir -p "$target_skills_dir"
+    find "$target_skills_dir" -mindepth 1 -maxdepth 1 -type d -exec rm -rf {} +
+
+    local copied=0
+    for dir in "$source_skills_dir"/*; do
+        [[ -d "$dir" ]] || continue
+        cp -R "$dir" "$target_skills_dir/"
+        copied=$((copied + 1))
+        echo "  copied: $(basename "$dir")"
+    done
+
+    echo "  result: copied=$copied"
+}
+
 sync_skills_to_workflows() {
     local src="$1"
     local dst="$2"
     local copied=0
-    local unchanged=0
 
     echo "sync: skills -> workflows"
 
@@ -108,6 +135,8 @@ sync_skills_to_workflows() {
         echo "  (no skills directory, skipping)"
         return
     fi
+
+    find "$dst" -mindepth 1 -maxdepth 1 -type f -name '*.md' -delete
 
     shopt -s nullglob
     for skill_dir in "$src"/*/; do
@@ -121,24 +150,22 @@ sync_skills_to_workflows() {
 
         local target="$dst/${skill_name}.md"
 
-        if [[ -f "$target" ]] && cmp -s "$skill_file" "$target"; then
-            unchanged=$((unchanged + 1))
-            continue
-        fi
-
         cp "$skill_file" "$target"
         copied=$((copied + 1))
         echo "  updated: ${skill_name}.md"
     done
     shopt -u nullglob
 
-    echo "  result: copied=$copied unchanged=$unchanged"
+    echo "  result: copied=$copied"
 }
 
 echo "sync start ($DIRECTION)"
-sync_markdown_files "$SRC_COMMANDS" "$DST_WORKFLOWS" "commands/workflows (*.md)"
 sync_markdown_files "$SRC_RULES" "$DST_RULES" "rules (*.md)"
 if [[ "$FROM" == "claude" ]]; then
-    sync_skills_to_workflows "$PROJECT_ROOT/.claude/skills" "$DST_WORKFLOWS"
+    sync_skill_directories "$SOURCE_SKILLS" "$TARGET_CODEX_SKILLS" "skills -> codex"
+    sync_skill_directories "$SOURCE_SKILLS" "$TARGET_AGENT_SKILLS" "skills -> antigravity"
+    sync_skills_to_workflows "$SOURCE_SKILLS" "$DST_WORKFLOWS"
+else
+    sync_skill_directories "$SOURCE_SKILLS" "$TARGET_CLAUDE_SKILLS" "skills -> claude"
 fi
 echo "sync complete"

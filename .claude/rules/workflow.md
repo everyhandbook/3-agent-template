@@ -1,25 +1,24 @@
 # 워크플로우 및 스킬 작성 규칙
 
-이 템플릿은 `공통 workflow`와 `도구별 skill`을 구분해서 운영합니다.
+이 템플릿은 `shared skill`을 원본으로 두고, 필요 시 workflow 호환 미러를 함께 운영합니다.
 
 ## 구조
 
 - `.claude/commands/`
-  - 공통 workflow 원본
+  - 사용하지 않음
 - `.agent/workflows/`
-  - Antigravity 실행 미러
+  - Antigravity workflow compatibility mirror
 - `.claude/skills/`
-  - Claude Code용 skills
+  - shared skill 원본
 - `.agents/skills/`
-  - Codex 전용 skills
+  - Codex skill mirror
 - `.agent/skills/`
-  - Antigravity 전용 skills
+  - Antigravity skill mirror
 
 ## 실행 방식
 
 - Claude Code
   - `.claude/skills/` 우선
-  - 공통 workflow는 `.claude/commands/` 사용 가능
 - Antigravity
   - `.agent/skills/` 자동 활성화
   - `.agent/workflows/`는 `/명령어`로 실행
@@ -42,17 +41,18 @@
 
 ## 작성 원칙
 
-1. 공통 workflow는 `.claude/commands/`에 작성합니다.
+1. 공통 skill은 `.claude/skills/`에 작성합니다.
 2. 공통 규칙은 `.claude/rules/`에 작성합니다.
-3. Codex 전용 skill은 `.agents/skills/{name}/SKILL.md`에 작성합니다.
-4. Antigravity 전용 skill은 `.agent/skills/`에 작성합니다.
-5. `.agent` 미러는 직접 수정하지 않고 sync로 반영합니다.
+3. `SKILL.md`에는 frontmatter의 `name`, `description`을 포함합니다.
+4. Codex UI 노출이 필요하면 `agents/openai.yaml`을 함께 둡니다.
+5. `.agent`, `.agents` 미러는 직접 수정하지 않고 sync로 반영합니다.
 6. 세션 운영 규칙을 바꾸는 경우 `docs/lessons.md` 확인 및 반영 절차와 충돌하지 않는지 함께 점검합니다.
 
 ## 동기화
 
-- `.claude/commands/*.md` -> `.agent/workflows/*.md`
 - `.claude/rules/*.md` -> `.agent/rules/*.md`
+- `.claude/skills/*/*` -> `.agents/skills/*/*`
+- `.claude/skills/*/*` -> `.agent/skills/*/*`
 - `.claude/skills/*/SKILL.md` -> `.agent/workflows/{name}.md`
 
 즉, 공통 자산은 항상 `.claude`에서 먼저 수정합니다.
