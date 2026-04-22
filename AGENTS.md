@@ -23,6 +23,18 @@
 - `session-start` 때는 최근 `docs/lessons.md` 항목을 먼저 확인하고, 관련 교훈이 있으면 작업 전에 반영합니다.
 - `checkpoint`와 `session-wrap-up` 때는 새로 남겨야 할 lesson이 생겼는지 함께 판단합니다.
 
+## Checkpoint 파일 운영
+
+- `CHECKPOINT.md`는 **최신 진행 상태를 빠르게 이어받기 위한 요약 파일**입니다.
+- 이 파일에는 아래 4가지만 간결하게 유지합니다.
+  - 방금 완료한 일
+  - 다음에 바로 할 일
+  - 이번 작업과 직접 관련된 파일
+  - 현재 남아 있는 리스크
+- `CHECKPOINT.md`는 누적 히스토리 문서가 아니라 **최신 handoff 스냅샷**입니다.
+- 새 체크포인트를 남길 때는 이전 내용을 계속 덧붙이지 말고, 최신 상태 기준으로 갱신합니다.
+- 장기 기록은 `docs/session-logs/`, 반복 교훈은 `docs/lessons.md`에 남깁니다.
+
 ## 단일 원본 정책 (Single Source of Truth)
 
 - **공통 원본**: `.claude`
@@ -60,6 +72,8 @@
   - 새 세션에서 현재 상태와 다음 작업을 빠르게 파악하는 시작 skill
 - `checkpoint`
   - 세션을 닫지 않고 현재 작업만 정리하고 관련 파일만 골라 로컬 커밋으로 남기는 경량 skill
+- `CHECKPOINT.md`
+  - 최신 진행 상태를 빠르게 이어받기 위한 현재 상태 요약 파일
 - `session-wrap-up`
   - 세션 종료 시 `task.md`, 세션 로그, `docs/lessons.md` 반영 여부를 정리하는 종료 skill
 - `agent-handoff`

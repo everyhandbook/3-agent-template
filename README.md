@@ -9,7 +9,7 @@
 2. **워크플로우 자동화**
    - 반복적인 작업(세션 시작/종료, checkpoint, handoff 등)을 skill-first 구조와 스크립트로 운영합니다.
 3. **문서 기반 운영**
-   - 프로젝트의 모든 상태와 의사결정을 문서(`task.md`, `AGENTS.md`, `docs/session-logs/`, `docs/lessons.md`)에 기록하여 히스토리를 관리합니다.
+   - 프로젝트의 모든 상태와 의사결정을 문서(`task.md`, `AGENTS.md`, `CHECKPOINT.md`, `docs/session-logs/`, `docs/lessons.md`)에 기록하여 히스토리를 관리합니다.
 
 ## 디렉토리 구조
 
@@ -27,6 +27,7 @@
 ├── docs/
 │   ├── lessons.md              # 운영 교훈 누적 문서
 │   └── session-logs/           # 세션 로그, brief, review, handoff, status
+├── CHECKPOINT.md               # 최신 진행 상태 handoff
 ├── scripts/                    # 동기화 스크립트 (Bash/PowerShell)
 ├── AGENTS.md                   # 에이전트 운영 가이드
 └── task.md                     # 프로젝트 진행 상황 추적
@@ -40,6 +41,8 @@
   - 새 세션에서 현재 상태와 다음 작업을 빠르게 파악하는 시작 skill
 - `checkpoint`
   - 세션을 닫지 않고 현재 작업만 정리해 로컬 커밋으로 남기는 경량 skill
+- `CHECKPOINT.md`
+  - 최신 진행 상태를 빠르게 이어받기 위한 현재 상태 요약 파일
 - `session-wrap-up`
   - 세션 종료 시 `task.md`, 세션 로그, `docs/lessons.md` 반영 여부를 정리하는 종료 skill
 - `agent-handoff`
@@ -72,6 +75,8 @@
 1. `session-start`로 현재 상태 확인
 2. 작업 진행 중 필요하면 `agent-handoff` 또는 `checkpoint` 사용
 3. 세션 종료 시 `session-wrap-up`으로 `task.md`, 세션 로그, `docs/lessons.md` 반영 여부 점검
+
+`CHECKPOINT.md`는 과거 이력을 누적하는 문서가 아니라, 다음 세션이 바로 이어받을 수 있게 최신 상태만 유지하는 파일로 사용합니다.
 
 ## 3-Agent 동기화 원칙
 
