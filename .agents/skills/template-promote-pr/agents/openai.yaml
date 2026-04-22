@@ -1,0 +1,4 @@
+interface:
+  display_name: "Template Promote PR"
+  short_description: "공용 템플릿 반영 여부를 판단하고 PR까지 준비"
+  default_prompt: "Use $template-promote-pr to decide whether this change belongs in 3-agent-template, and if so apply it there and prepare a PR."
