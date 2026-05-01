@@ -26,6 +26,7 @@
   - 평시에는 `.agent`를 직접 수정하지 않습니다.
 - **Codex 미러**: `.agents/skills`
   - `.claude/skills`를 Codex에서 읽기 좋은 구조로 미러링합니다.
+  - Codex용 rules 폴더는 따로 두지 않습니다. 공통 운영 규칙의 Codex 진입점은 repo 루트의 `AGENTS.md`입니다.
 
 ## 경로 매핑
 
@@ -35,6 +36,7 @@
 | `.claude/skills/*/SKILL.md` | `.agent/skills/*/SKILL.md` | Antigravity skill mirror |
 | `.claude/skills/*/SKILL.md` | `.agent/workflows/{name}.md` | Antigravity workflow compatibility mirror |
 | `.claude/rules/*.md` | `.agent/rules/*.md` | 공통 규칙 |
+| `AGENTS.md` | Codex rules entrypoint | Codex 공통 운영 규칙 |
 
 ## 에이전트별 실행 방식
 
@@ -43,8 +45,10 @@
 - **Google Antigravity**
   - `.agent/skills/`, `.agent/workflows/`, `.agent/rules/`를 사용
 - **Codex**
+  - 공통 운영 규칙은 repo 루트의 `AGENTS.md`를 우선 사용
   - `.agents/skills/`를 우선 사용
-  - 공통 운영 규칙은 `AGENTS.md`, `.claude`, `.agent` 문서를 함께 참조
+  - `.agents/rules/`는 만들지 않음
+  - 필요 시 `.claude`, `.agent` 문서를 보조 맥락으로 참조
 
 ## 기본 제공 운영 자산
 
