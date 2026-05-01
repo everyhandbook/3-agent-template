@@ -16,6 +16,12 @@ description: .claude/와 .agent/ 간 동기화 규칙
 | `.claude/skills/*/*` | `.agent/skills/*/*` | 디렉터리 미러 |
 | `.claude/skills/*/SKILL.md` | `.agent/workflows/{name}.md` | workflow compatibility flatten sync |
 
+## Codex rules 처리
+
+Codex에는 `.agents/rules/` 폴더를 두지 않습니다. Codex가 공통 운영 규칙을 확인하는 entrypoint는 repo 루트의 `AGENTS.md`입니다.
+
+`.agents/skills/`는 Codex용 skill mirror 위치이며 rules 위치가 아닙니다.
+
 ## 정상 운영 플로우
 
 1. `.claude` 원본을 수정합니다.

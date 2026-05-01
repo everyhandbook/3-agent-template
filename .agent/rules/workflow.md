@@ -12,6 +12,8 @@
   - shared skill 원본
 - `.agents/skills/`
   - Codex skill mirror
+- `AGENTS.md`
+  - Codex 공통 운영 규칙 entrypoint
 - `.agent/skills/`
   - Antigravity skill mirror
 
@@ -23,6 +25,7 @@
   - `.agent/skills/` 자동 활성화
   - `.agent/workflows/`는 `/명령어`로 실행
 - Codex
+  - `AGENTS.md` 우선
   - `.agents/skills/` 우선
   - 공통 workflow는 문서 또는 자연어 요청으로 수행
 
@@ -43,10 +46,12 @@
 
 1. 공통 skill은 `.claude/skills/`에 작성합니다.
 2. 공통 규칙은 `.claude/rules/`에 작성합니다.
-3. `SKILL.md`에는 frontmatter의 `name`, `description`을 포함합니다.
-4. Codex UI 노출이 필요하면 `agents/openai.yaml`을 함께 둡니다.
-5. `.agent`, `.agents` 미러는 직접 수정하지 않고 sync로 반영합니다.
-6. 세션 운영 규칙을 바꾸는 경우 `docs/lessons.md` 확인 및 반영 절차와 충돌하지 않는지 함께 점검합니다.
+3. Codex가 반드시 따라야 하는 공통 운영 규칙은 repo 루트의 `AGENTS.md`에도 정리합니다.
+4. `.agents/rules/`는 만들지 않습니다.
+5. `SKILL.md`에는 frontmatter의 `name`, `description`을 포함합니다.
+6. Codex UI 노출이 필요하면 `agents/openai.yaml`을 함께 둡니다.
+7. `.agent`, `.agents` 미러는 직접 수정하지 않고 sync로 반영합니다.
+8. 세션 운영 규칙을 바꾸는 경우 `docs/lessons.md` 확인 및 반영 절차와 충돌하지 않는지 함께 점검합니다.
 
 ## 동기화
 
